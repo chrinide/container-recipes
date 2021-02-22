@@ -1,0 +1,37 @@
+Bootstrap: localimage
+From: ../../base/centos/centos.sif
+
+%help
+    Test container for the full-potential, all-electron FHI-aims electronic
+    structure package.
+
+%labels
+    MAINTAINER William Huhn (will@huhn.tech)
+    VERSION ???
+
+%runscript
+    /opt/FHI-aims/bin/aims.x
+
+%files
+    ./FHIaims /FHIaims
+    ./initial_cache.cmake /configs/initial_cache.cmake
+
+%post
+    # Install needed packages
+    yum update -y
+    yum install -y \
+        cmake \
+        git
+    yum clean all
+
+#    # Download the FHI-aims source code
+#    echo 'aims-git.rz-berlin.mpg.de,141.14.177.25 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGjz5fWz7iYO3Y+t/Bo32mVYTO3jFsyHe9L5+6Wr+LGREPN1G0dGDh8nYgsVSDV82M4NHOzRkmrDtw37vkGXIouKABJ2f5XkNgk+xyGdgVf3Bdt7P8AU2bTKY9kXpglSm6OHwOyJqDSHDXSuJNZfKrhWyhZIJsQ0D/l0KxAdy5Cy5eVXg==' >> /etc/ssh/ssh_known_hosts
+#    cd /tmp
+#    git clone https://aims-git.rz-berlin.mpg.de/aims/FHIaims.git && cd FHIaims
+    cd /FHIaims/
+
+    rm -rf build && mkdir build && cd build
+    cp /configs/initial_cache.cmake initial_cache.cmake
+    cmake -C initial_cache.cmake ..
+    make -j && make install
+#    rm -rf  /tmp/FHIaims
