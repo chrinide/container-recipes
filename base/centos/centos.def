@@ -1,0 +1,64 @@
+Bootstrap: docker
+From: centos:8.3.2011
+
+%help
+    Test container pre-installed with various common math/communication
+    libraries for electronic structure theory.
+
+%labels
+    MAINTAINER William Huhn (will@huhn.tech)
+    VERSION ???
+
+%post
+    # Install needed packages
+    yum update -y
+    yum install -y \
+        gcc \
+        gcc-c++ \
+        gcc-gfortran \
+        perl \
+        make \
+        wget
+    yum clean all
+
+    # Download and install Open MPI from source
+    cd /tmp
+    wget https://download.open-mpi.org/release/open-mpi/v3.0/openmpi-3.0.0.tar.gz
+    tar -zxf openmpi-3.0.0.tar.gz && cd openmpi-3.0.0
+    rm -rf build && mkdir build && cd build
+    ../configure CC=gcc CXX=g++ FC=gfortran
+    make -j && make install
+    ldconfig
+    rm -rf /tmp/openmpi-3.0.0.tar.gz /tmp/openmpi-3.0.0
+
+    # Download and install OpenBLAS from source
+    cd /tmp
+    wget http://github.com/xianyi/OpenBLAS/archive/v0.2.20.tar.gz
+    tar -zxf v0.2.20.tar.gz && cd OpenBLAS-0.2.20/
+    make -j && make install && mv /opt/OpenBLAS /opt/openblas
+    rm -rf /tmp/v0.2.20.tar.gz /tmp/OpenBLAS-0.2.20/
+
+    # Download and install NetLib ScaLAPACK from source
+    cd /tmp
+    wget http://www.netlib.org/scalapack/scalapack-2.0.2.tgz
+    tar -zxf scalapack-2.0.2.tgz && cd scalapack-2.0.2
+    cp SLmake.inc.example SLmake.inc
+    make lib && mkdir -p /opt/scalapack/lib && mv libscalapack.a /opt/scalapack/lib/libscalapack.a
+    rm -rf /tmp/scalapack-2.0.2.tgz /tmp/scalapack-2.0.2
+
+    # Download and install FFTW3 from source
+    cd /tmp
+    wget ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5.tar.gz
+    tar -zxf fftw-3.3.5.tar.gz && cd fftw-3.3.5
+    ./configure --enable-openmp --prefix=/opt/fftw3 F77=gfortran F90=gfortran
+    make -j && make install
+    rm -rf /tmp/fftw-3.3.5.tar.gz /tmp/fftw-3.3.5/ 
+
+    # Download and install HDF5 from source
+    cd /tmp
+    wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.5/src/hdf5-1.10.5.tar.gz
+    tar -zxf hdf5-1.10.5.tar.gz && cd hdf5-1.10.5 && mkdir build && cd build
+    ../configure --enable-fortran --enable-parallel --disable-shared --enable-static \
+                 --enable-fortran2003 --enable-parallel --with-pic --prefix=/opt/hdf5
+    make -j && make install
+    rm -rf /tmp/hdf5-1.10.5.tar.gz /tmp/hdf5-1.10.5/
