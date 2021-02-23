@@ -1,0 +1,21 @@
+Bootstrap: localimage
+From: ../../base/centos/centos.sif
+
+%help
+    Test container for Quantum ESPRESSO.
+
+%labels
+    MAINTAINER William Huhn (will@huhn.tech)
+    VERSION ???
+
+%post
+    QE_VERSION=6.6
+
+    cd /tmp
+    git clone https://gitlab.com/QEF/q-e.git
+    cd q-e && git checkout qe-${QE_VERSION}
+    # Note: setting --enable-openmp disables FFTW3, possible threading issue?
+    # Note:  HDF5 install does not have Fortran modules, must investigate
+    ./configure
+    make all epw && make install
+    rm -rf /tmp/q-e
