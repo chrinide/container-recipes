@@ -10,20 +10,13 @@ From: ../../base/centos/centos.sif
     VERSION ???
 
 %runscript
-    /opt/FHI-aims/bin/aims.x
+    /opt/FHIaims/bin/aims.x
 
 %files
     ./FHIaims /FHIaims
     ./initial_cache.cmake /configs/initial_cache.cmake
 
 %post
-    # Install needed packages
-    yum update -y
-    yum install -y \
-        cmake \
-        git
-    yum clean all
-
 #    # Download the FHI-aims source code
 #    echo 'aims-git.rz-berlin.mpg.de,141.14.177.25 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGjz5fWz7iYO3Y+t/Bo32mVYTO3jFsyHe9L5+6Wr+LGREPN1G0dGDh8nYgsVSDV82M4NHOzRkmrDtw37vkGXIouKABJ2f5XkNgk+xyGdgVf3Bdt7P8AU2bTKY9kXpglSm6OHwOyJqDSHDXSuJNZfKrhWyhZIJsQ0D/l0KxAdy5Cy5eVXg==' >> /etc/ssh/ssh_known_hosts
 #    cd /tmp

@@ -3,7 +3,13 @@ From: centos:8.3.2011
 
 %help
     Test container pre-installed with various common math/communication
-    libraries for electronic structure theory.
+    libraries for electronic structure theory.  The following libraries
+    are installed:
+    * OpenMPI 3.0.0
+    * OpenBLAS 0.3.13
+    * NetLib ScaLAPACK 2.1.0
+    * FFTW 3.3.5
+    * HDF 1.10.5 (located in /usr/local/HDF_Group/HDF5/1.10.5/)
 
 %labels
     MAINTAINER William Huhn (will@huhn.tech)
@@ -13,11 +19,14 @@ From: centos:8.3.2011
     # Install needed packages
     yum update -y
     yum install -y \
+        cmake \
         gcc \
         gcc-c++ \
         gcc-gfortran \
-        perl \
+        git \
         make \
+        perl \
+        vim \
         wget
     yum clean all
 
@@ -33,32 +42,35 @@ From: centos:8.3.2011
 
     # Download and install OpenBLAS from source
     cd /tmp
-    wget http://github.com/xianyi/OpenBLAS/archive/v0.2.20.tar.gz
-    tar -zxf v0.2.20.tar.gz && cd OpenBLAS-0.2.20/
-    make -j && make install && mv /opt/OpenBLAS /opt/openblas
-    rm -rf /tmp/v0.2.20.tar.gz /tmp/OpenBLAS-0.2.20/
+    wget http://github.com/xianyi/OpenBLAS/archive/v0.3.13.tar.gz
+    tar -zxf v0.3.13.tar.gz && cd OpenBLAS-0.3.13/
+    rm -rf build && mkdir build && cd build
+    cmake -DBUILD_SHARED_LIBS=true -DCMAKE_INSTALL_LIBDIR=/usr/local/lib ..
+    make -j && make install
+    rm -rf /tmp/v0.3.13.tar.gz /tmp/OpenBLAS-0.3.13/
 
     # Download and install NetLib ScaLAPACK from source
     cd /tmp
-    wget http://www.netlib.org/scalapack/scalapack-2.0.2.tgz
-    tar -zxf scalapack-2.0.2.tgz && cd scalapack-2.0.2
-    cp SLmake.inc.example SLmake.inc
-    make lib && mkdir -p /opt/scalapack/lib && mv libscalapack.a /opt/scalapack/lib/libscalapack.a
-    rm -rf /tmp/scalapack-2.0.2.tgz /tmp/scalapack-2.0.2
+    wget http://www.netlib.org/scalapack/scalapack-2.1.0.tgz
+    tar -zxf scalapack-2.1.0.tgz && cd scalapack-2.1.0
+    rm -rf build && mkdir build && cd build
+    cmake -DBUILD_SHARED_LIBS=true ..
+    make -j && make install
+    rm -rf /tmp/scalapack-2.1.0.tgz /tmp/scalapack-2.1.0
 
     # Download and install FFTW3 from source
     cd /tmp
     wget ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5.tar.gz
     tar -zxf fftw-3.3.5.tar.gz && cd fftw-3.3.5
-    ./configure --enable-openmp --prefix=/opt/fftw3 F77=gfortran F90=gfortran
+    ./configure --enable-openmp --enable-shared --enable-static F77=gfortran F90=gfortran
     make -j && make install
     rm -rf /tmp/fftw-3.3.5.tar.gz /tmp/fftw-3.3.5/ 
 
     # Download and install HDF5 from source
     cd /tmp
     wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.5/src/hdf5-1.10.5.tar.gz
-    tar -zxf hdf5-1.10.5.tar.gz && cd hdf5-1.10.5 && mkdir build && cd build
-    ../configure --enable-fortran --enable-parallel --disable-shared --enable-static \
-                 --enable-fortran2003 --enable-parallel --with-pic --prefix=/opt/hdf5
+    tar -zxf hdf5-1.10.5.tar.gz && cd hdf5-1.10.5
+    rm -rf build && mkdir build && cd build
+    cmake -DHDF5_BUILD_FORTRAN=true -DHDF5_BUILD_CPP_LIB=false -DHDF5_ENABLE_PARALLEL=true -DMPIEXEC_MAX_NUMPROCS=4 -DBUILD_SHARED_LIBS=true ..
     make -j && make install
     rm -rf /tmp/hdf5-1.10.5.tar.gz /tmp/hdf5-1.10.5/

@@ -7,7 +7,6 @@ set(CMAKE_INSTALL_PREFIX "/opt/FHIaims/" CACHE STRING "")
 set(CMAKE_Fortran_COMPILER mpifort CACHE STRING "")
 set(CMAKE_Fortran_FLAGS "-O2 -ffree-line-length-none" CACHE STRING "")
 set(Fortran_MIN_FLAGS "-O0 -ffree-line-length-none" CACHE STRING "")
-set(LIB_PATHS "/opt/scalapack/lib/;/opt/openblas/lib/" CACHE STRING "")
 set(LIBS "scalapack openblas" CACHE STRING "")
 
 ###############
