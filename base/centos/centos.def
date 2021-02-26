@@ -4,12 +4,12 @@ From: centos:8.3.2011
 %help
     Test container pre-installed with various common math/communication
     libraries for electronic structure theory.  The following libraries
-    are installed:
+    are installed to /usr/local/:
     * OpenMPI
     * OpenBLAS
     * NetLib ScaLAPACK
-    * FFTW
-    * HDF (located in /usr/local/HDF_Group/HDF5/)
+    * FFTW3
+    * HDF5
 
 %labels
     MAINTAINER William Huhn (will@huhn.tech)
@@ -68,7 +68,7 @@ From: centos:8.3.2011
     cd /tmp
     wget ftp://ftp.fftw.org/pub/fftw/fftw-${FFTW_VERSION}.tar.gz
     tar -zxf fftw-${FFTW_VERSION}.tar.gz && cd fftw-${FFTW_VERSION}
-    ./configure --enable-openmp --enable-shared --enable-static F77=gfortran F90=gfortran
+    ./configure --enable-openmp --enable-shared F77=gfortran F90=gfortran
     make -j && make install
     rm -rf /tmp/fftw-${FFTW_VERSION}.tar.gz /tmp/fftw-${FFTW_VERSION}/
 
@@ -80,6 +80,6 @@ From: centos:8.3.2011
     wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_MAJOR_MINOR_VERSION}/hdf5-${HDF5_VERSION}/src/hdf5-${HDF5_VERSION}.tar.gz
     tar -zxf hdf5-${HDF5_VERSION}.tar.gz && cd hdf5-${HDF5_VERSION}
     rm -rf build && mkdir build && cd build
-    cmake -DHDF5_BUILD_FORTRAN=true -DHDF5_BUILD_CPP_LIB=false -DHDF5_ENABLE_PARALLEL=true -DMPIEXEC_MAX_NUMPROCS=4 -DBUILD_SHARED_LIBS=true -DCMAKE_INSTALL_PREFIX=/usr/local/HDF_Group/HDF5/ ..
+    ../configure --enable-fortran --enable-parallel --enable-shared --enable-fortran2003 --prefix=/usr/local/
     make -j && make install
     rm -rf /tmp/hdf5-${HDF5_VERSION}.tar.gz /tmp/hdf5-${HDF5_VERSION}/

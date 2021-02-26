@@ -1,6 +1,6 @@
 COMPFLAG  = -DGNU
 PARAFLAG  = -DMPI
-MATHFLAG  = -DUSESCALAPACK -DUNPACKED -DUSEFFTW3 -DUSEMR3 # -DHDF5
+MATHFLAG  = -DUSESCALAPACK -DUNPACKED -DUSEFFTW3 -DUSEMR3 -DHDF5
 # Only uncomment DEBUGFLAG if you need to develop/debug BerkeleyGW.
 # The output will be much more verbose, and the code will slow down by ~20%.
 #DEBUGFLAG = -DDEBUG
@@ -30,6 +30,10 @@ LAPACKLIB    = -lopenblas
 BLACSDIR     =
 BLACS        =
 SCALAPACKLIB = -lscalapack
+
+# HDF Library
+HDF5LIB      = -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 -ldl
+HDF5INCLUDE  = /usr/local/include
 
 #need to export MPIEXEC=/usr/bin/mpirun if this is not default in `which mpiexec`
 TESTSCRIPT = make check-parallel
