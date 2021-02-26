@@ -11,11 +11,12 @@ From: ../../base/centos/centos.sif
 %post
     QE_VERSION=6.6
 
-    cd /tmp
+    cd /
     git clone https://gitlab.com/QEF/q-e.git
     cd q-e && git checkout qe-${QE_VERSION}
-    # Note: setting --enable-openmp disables FFTW3, possible threading issue?
-    # Note:  HDF5 install does not have Fortran modules, must investigate
-    ./configure --with-hdf5=/usr/local/
+    # Note: when OpenMP is enabled, the system FFTW3 library
+    #       is not picked up during configure and will be
+    #       built during QE install instead
+    ./configure --enable-openmp --with-hdf5=/usr/local/
     make all epw && make install
-    rm -rf /tmp/q-e
+    rm -rf /q-e/

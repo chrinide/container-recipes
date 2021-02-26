@@ -1,13 +1,13 @@
 COMPFLAG  = -DGNU
-PARAFLAG  = -DMPI
+PARAFLAG  = -DMPI -DOMP
 MATHFLAG  = -DUSESCALAPACK -DUNPACKED -DUSEFFTW3 -DUSEMR3 -DHDF5
 # Only uncomment DEBUGFLAG if you need to develop/debug BerkeleyGW.
 # The output will be much more verbose, and the code will slow down by ~20%.
 #DEBUGFLAG = -DDEBUG
 
 FCPP    = cpp -C -nostdinc
-F90free = mpif90 -ffree-form -ffree-line-length-none -fbounds-check -Wall -pedantic-errors -std=gnu
-LINK    = mpif90
+F90free = mpif90 -ffree-form -ffree-line-length-none -std=gnu -fopenmp
+LINK    = mpif90 -fopenmp
 FOPTS   = -O3
 FNOOPTS = $(FOPTS)
 MOD_OPT = -J
@@ -24,7 +24,7 @@ REMOVE  = /bin/rm -f
 
 # Math Libraries
 #
-FFTWLIB      = -lfftw3
+FFTWLIB      = -lfftw3 -lfftw3_omp
 FFTWINCLUDE  = /usr/local/include
 LAPACKLIB    = -lopenblas
 BLACSDIR     =

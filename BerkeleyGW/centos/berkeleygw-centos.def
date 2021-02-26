@@ -9,10 +9,15 @@ From: ../../base/centos/centos.sif
     VERSION ???
 
 %files
-    ./BerkeleyGW-2.1/ /opt/BerkeleyGW
     ./arch.mk /configs/arch.mk
 
+%environment
+    PATH=$PATH:/opt/BerkeleyGW/bin/
+
 %post
-    cd /opt/BerkeleyGW
+    cd /opt/
+    wget https://berkeley.box.com/shared/static/ze3azi5vlyw7hpwvl9i5f82kaiid6g0x.gz -O BerkeleyGW-2.1.tar.gz
+    tar -zxf BerkeleyGW-2.1.tar.gz && mv BerkeleyGW-2.1 BerkeleyGW && cd BerkeleyGW
     cp /configs/arch.mk arch.mk
     make all-flavors && make clean
+    rm -rf /opt/BerkeleyGW-2.1.tar.gz
