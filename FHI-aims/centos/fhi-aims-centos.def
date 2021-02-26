@@ -10,21 +10,38 @@ From: ../../base/centos/centos.sif
     VERSION ???
 
 %runscript
-    /opt/FHIaims/bin/aims.x
+    aims.x
 
 %files
-    ./FHIaims /FHIaims
+    ./git_repo/ /FHIaims
     ./initial_cache.cmake /configs/initial_cache.cmake
 
 %post
-#    # Download the FHI-aims source code
-#    echo 'aims-git.rz-berlin.mpg.de,141.14.177.25 ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGjz5fWz7iYO3Y+t/Bo32mVYTO3jFsyHe9L5+6Wr+LGREPN1G0dGDh8nYgsVSDV82M4NHOzRkmrDtw37vkGXIouKABJ2f5XkNgk+xyGdgVf3Bdt7P8AU2bTKY9kXpglSm6OHwOyJqDSHDXSuJNZfKrhWyhZIJsQ0D/l0KxAdy5Cy5eVXg==' >> /etc/ssh/ssh_known_hosts
-#    cd /tmp
-#    git clone https://aims-git.rz-berlin.mpg.de/aims/FHIaims.git && cd FHIaims
-    cd /FHIaims/
-
+    GIT_VERSION=1bf89dc3f1c5afa221f5af3af57574af8ae0b25c
+    cd /FHIaims && git checkout ${GIT_VERSION}
     rm -rf build && mkdir build && cd build
     cp /configs/initial_cache.cmake initial_cache.cmake
     cmake -C initial_cache.cmake ..
     make -j && make install
-#    rm -rf  /tmp/FHIaims
+    cp -r ../regression_tests /regression_tests
+    rm -rf /FHIaims
+
+##############################
+# test-mpi
+##############################
+
+%apprun test-mpi
+    UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+    RUN_DIR=/tmp/regression_tests_${UUID}
+    cp -r /regression_tests $RUN_DIR && cd $RUN_DIR
+    ./regressiontools.py full --mpiexe mpiexec --cpus ${N_CPUS_TEST} --batch --exclude "RT-TDDFT" ./references_lastrelease/ aims.x
+
+%appinstall test-mpi
+    yum install -y python3
+    yum clean all
+
+%appenv test-mpi
+    export N_CPUS_TEST=4
+
+%apphelp test-mpi
+    Runs the regression suite of FHI-aims within the container

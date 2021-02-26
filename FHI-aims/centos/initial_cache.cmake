@@ -1,5 +1,4 @@
 set(TARGET_NAME aims.x CACHE STRING "")
-set(CMAKE_INSTALL_PREFIX "/opt/FHIaims/" CACHE STRING "")
 
 ###############
 # Basic Flags #
