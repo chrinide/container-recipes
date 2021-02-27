@@ -14,9 +14,37 @@ From: ../../base/centos/centos.sif
     cd /
     git clone https://gitlab.com/QEF/q-e.git
     cd q-e && git checkout qe-${QE_VERSION}
-    # Note: when OpenMP is enabled, the system FFTW3 library
-    #       is not picked up during configure and will be
-    #       built during QE install instead
     ./configure --enable-openmp --with-hdf5=/usr/local/
     make all epw && make install
+
+    # Prepare test suite files for reuse
+    mkdir -p /qe-tests/
+    cp -r /q-e/pseudo /qe-tests/
+    cp -r /q-e/test-suite /qe-tests/
+    mkdir -p /qe-tests/EPW/bin/ && cp -r /q-e/EPW/bin/* /qe-tests/EPW/bin/
+    cd /qe-tests/test-suite/
+    sed -i '/^export ESPRESSO_ROOT/d' ENVIRONMENT
+    sed -i 's/# export ESPRESSO_ROOT/export ESPRESSO_ROOT/' ENVIRONMENT
+    make pseudo
+
     rm -rf /q-e/
+
+##############################
+# test-mpi
+##############################
+
+%apprun test-mpi
+    UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+    RUN_DIR=/tmp/regression_tests_${UUID}
+    export TMP_DIR=${RUN_DIR}/workspace
+    cp -r /qe-tests/ ${RUN_DIR} && cd ${RUN_DIR}
+    # Do not believe the documentation, the "BIN_DIR" environment variable does nothing.
+    ln -s /usr/local/bin/ ./bin
+    cd test-suite && make run-tests-parallel
+
+%appinstall test-mpi
+    yum install -y python3
+    yum clean all
+
+%apphelp test-mpi
+    Runs the regression suite of Quantum ESPRESSO within the container

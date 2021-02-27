@@ -1,6 +1,5 @@
 Main TODOs:
 
-* Add testing to Quantum ESPRESSO container
 * Fix metadata in headers
 * Stop using local image bootstrapping for code containers
 * Upload to Singularity Hub
