@@ -38,6 +38,7 @@ From: ../../base/centos/centos.sif
 %appinstall test-mpi
     yum install -y python3
     yum clean all
+    python3 -m pip install --no-cache-dir numpy
     alternatives --set python /usr/bin/python3
 
 %appenv test-mpi

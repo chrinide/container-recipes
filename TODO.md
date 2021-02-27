@@ -10,4 +10,3 @@ Would-Be-Nice:
   installing Quantum ESPRESSO with OpenMP
 * Figure out why RT-TDDFT runs are crashing in FHI-aims test
   suite
-* Fix failing BerkeleyGW regression runs
