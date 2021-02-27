@@ -1,6 +1,6 @@
 Main TODOs:
 
-* Add testing to BerkeleyGW and Quantum ESPRESSO containers
+* Add testing to Quantum ESPRESSO container
 * Fix metadata in headers
 * Stop using local image bootstrapping for code containers
 * Upload to Singularity Hub
@@ -11,3 +11,4 @@ Would-Be-Nice:
   installing Quantum ESPRESSO with OpenMP
 * Figure out why RT-TDDFT runs are crashing in FHI-aims test
   suite
+* Fix failing BerkeleyGW regression runs
