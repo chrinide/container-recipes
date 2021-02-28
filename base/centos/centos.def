@@ -34,52 +34,52 @@ From: centos:8.3.2011
     MPI_MAJOR_MINOR_VERSION=3.0
     MPI_PATCH_VERSION=0
     MPI_VERSION=${MPI_MAJOR_MINOR_VERSION}.${MPI_PATCH_VERSION}
-    cd /tmp
+    cd /
     wget https://download.open-mpi.org/release/open-mpi/v${MPI_MAJOR_MINOR_VERSION}/openmpi-${MPI_VERSION}.tar.gz
     tar -zxf openmpi-${MPI_VERSION}.tar.gz && cd openmpi-${MPI_VERSION}
     rm -rf build && mkdir build && cd build
     ../configure CC=gcc CXX=g++ FC=gfortran
     make -j && make install
     ldconfig
-    rm -rf /tmp/openmpi-${MPI_VERSION}.tar.gz /tmp/openmpi-${MPI_VERSION}
+    rm -rf /openmpi-${MPI_VERSION}.tar.gz /openmpi-${MPI_VERSION}
 
     # Download and install OpenBLAS from source
     OPENBLAS_VERSION=0.3.13
-    cd /tmp
+    cd /
     wget http://github.com/xianyi/OpenBLAS/archive/v${OPENBLAS_VERSION}.tar.gz
     tar -zxf v${OPENBLAS_VERSION}.tar.gz && cd OpenBLAS-${OPENBLAS_VERSION}/
     rm -rf build && mkdir build && cd build
     cmake -DBUILD_SHARED_LIBS=true -DCMAKE_INSTALL_LIBDIR=/usr/local/lib ..
     make -j && make install
-    rm -rf /tmp/v${OPENBLAS_VERSION}.tar.gz /tmp/OpenBLAS-${OPENBLAS_VERSION}/
+    rm -rf /v${OPENBLAS_VERSION}.tar.gz /OpenBLAS-${OPENBLAS_VERSION}/
 
     # Download and install NetLib ScaLAPACK from source
     SCALAPACK_VERSION=2.1.0
-    cd /tmp
+    cd /
     wget http://www.netlib.org/scalapack/scalapack-${SCALAPACK_VERSION}.tgz
     tar -zxf scalapack-${SCALAPACK_VERSION}.tgz && cd scalapack-${SCALAPACK_VERSION}
     rm -rf build && mkdir build && cd build
     cmake -DBUILD_SHARED_LIBS=true ..
     make -j && make install
-    rm -rf /tmp/scalapack-${SCALAPACK_VERSION}.tgz /tmp/scalapack-${SCALAPACK_VERSION}
+    rm -rf /scalapack-${SCALAPACK_VERSION}.tgz /scalapack-${SCALAPACK_VERSION}
 
     # Download and install FFTW3 from source
     FFTW_VERSION=3.3.5
-    cd /tmp
+    cd /
     wget ftp://ftp.fftw.org/pub/fftw/fftw-${FFTW_VERSION}.tar.gz
     tar -zxf fftw-${FFTW_VERSION}.tar.gz && cd fftw-${FFTW_VERSION}
     ./configure --enable-openmp --enable-shared F77=gfortran F90=gfortran
     make -j && make install
-    rm -rf /tmp/fftw-${FFTW_VERSION}.tar.gz /tmp/fftw-${FFTW_VERSION}/
+    rm -rf /fftw-${FFTW_VERSION}.tar.gz /fftw-${FFTW_VERSION}/
 
     # Download and install HDF5 from source
     HDF5_MAJOR_MINOR_VERSION=1.10
     HDF5_PATCH_VERSION=5
     HDF5_VERSION=${HDF5_MAJOR_MINOR_VERSION}.${HDF5_PATCH_VERSION}
-    cd /tmp
+    cd /
     wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_MAJOR_MINOR_VERSION}/hdf5-${HDF5_VERSION}/src/hdf5-${HDF5_VERSION}.tar.gz
     tar -zxf hdf5-${HDF5_VERSION}.tar.gz && cd hdf5-${HDF5_VERSION}
     rm -rf build && mkdir build && cd build
     ../configure --enable-fortran --enable-parallel --enable-shared --enable-fortran2003 --prefix=/usr/local/
     make -j && make install
-    rm -rf /tmp/hdf5-${HDF5_VERSION}.tar.gz /tmp/hdf5-${HDF5_VERSION}/
+    rm -rf /hdf5-${HDF5_VERSION}.tar.gz /hdf5-${HDF5_VERSION}/
