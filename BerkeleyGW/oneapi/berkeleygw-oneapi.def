@@ -1,0 +1,51 @@
+Bootstrap: localimage
+From: ../../base/oneapi/oneapi.sif
+
+%help
+    Test container for BerkeleyGW.
+
+%labels
+    MAINTAINER William Huhn (will@huhn.tech)
+    VERSION ???
+
+%files
+    ./arch.mk /configs/arch.mk
+
+%environment
+    PATH=$PATH:/opt/BerkeleyGW/bin/
+
+%post -c /bin/bash
+    source /opt/intel/oneapi/setvars.sh
+
+    cd /opt/
+    wget https://berkeley.box.com/shared/static/ze3azi5vlyw7hpwvl9i5f82kaiid6g0x.gz -O BerkeleyGW-2.1.tar.gz
+    tar -zxf BerkeleyGW-2.1.tar.gz && mv BerkeleyGW-2.1 BerkeleyGW && cd BerkeleyGW
+    cp /configs/arch.mk arch.mk
+    make all-flavors && make clean
+    rm -rf /opt/BerkeleyGW-2.1.tar.gz
+
+##############################
+# test-mpi
+##############################
+
+%apprun test-mpi
+    export UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+    export RUN_DIR=/tmp/regression_tests_${UUID}
+    export TEMPDIRPATH=${RUN_DIR}/workspace
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+    /bin/bash <<EOF
+        source /opt/intel/oneapi/setvars.sh
+        mkdir -p $RUN_DIR
+        cp -r /opt/BerkeleyGW/testsuite $RUN_DIR
+        cp /opt/BerkeleyGW/arch.mk $RUN_DIR
+        cd ${RUN_DIR}/testsuite && make check-parallel
+EOF 
+
+%appenv test-mpi
+    export MPIEXEC="mpirun"
+    export OMP_NUM_THREADS=2
+    export BGW_TEST_MPI_NPROCS=4
+    export BGW_CHECK_FLAGS="-b /opt/BerkeleyGW/bin/"
+
+%apphelp test-mpi
+    Runs the regression suite of BerkleyGW within the container
