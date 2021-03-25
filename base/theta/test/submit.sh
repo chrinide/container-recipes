@@ -14,6 +14,9 @@ module swap cray-mpich cray-mpich-abi
 # Output current modules being used (for debugging)
 module list
 
+# Only needed when interactive debugging
+#module swap PrgEnv-intel PrgEnv-cray; module swap PrgEnv-cray PrgEnv-intel
+
 # Need /opt/cray/diag/lib for the following libraries: libifport.so.5, libifcore.so.5, libimf.so, libsvml.so, libintlc.so.5
 # Need /opt/cray/ugni/default/lib64/ for the following libraries: libugni.so.0
 # Need /opt/cray/udreg/default/lib64/ for the following libraries: libudreg.so.0
