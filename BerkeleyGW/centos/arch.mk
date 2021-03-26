@@ -24,16 +24,16 @@ REMOVE  = /bin/rm -f
 
 # Math Libraries
 #
-FFTWLIB      = -lfftw3 -lfftw3_omp
-FFTWINCLUDE  = /usr/local/include
-LAPACKLIB    = -lopenblas
-BLACSDIR     =
+FFTWLIB      = -L/my_packages/fftw3/lib -lfftw3 -lfftw3_omp
+FFTWINCLUDE  = /my_packages/fftw3/include
+LAPACKLIB    = -L/my_packages/openblas/lib64 -lopenblas
+BLACSDIR     = 
 BLACS        =
-SCALAPACKLIB = -lscalapack
+SCALAPACKLIB = -L/my_packages/scalapack/lib -lscalapack
 
 # HDF Library
-HDF5LIB      = -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 -ldl
-HDF5INCLUDE  = /usr/local/include
+HDF5LIB      = -L/my_packages/hdf5/lib -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 -ldl
+HDF5INCLUDE  = /my_packages/hdf5/include
 
 #need to export MPIEXEC=/usr/bin/mpirun if this is not default in `which mpiexec`
 TESTSCRIPT = make check-parallel

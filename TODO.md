@@ -1,9 +1,8 @@
 Main TODOs:
 
+* Convert Quantum ESPRESSO and FHI-aim containers to new file system
 * Fix metadata in headers
 * Convert Singularity to Docker + Singularity
-* Install all libraries to /usr/local/<package> (advice from Scott McMillan in Singularity slack)
-    * Can't install to /opt since Theta requires you bind this folder in to work
 * Stop using local image bootstrapping for code containers
 
 Would-Be-Nice:

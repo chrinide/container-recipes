@@ -12,15 +12,23 @@ From: ../../base/centos/centos.sif
     ./arch.mk /configs/arch.mk
 
 %environment
-    PATH=$PATH:/opt/BerkeleyGW/bin/
+
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PACKAGES_BASE}/fftw3/lib/:${PACKAGES_BASE}/hdf5/lib/:${PACKAGES_BASE}/mpich/lib/:${PACKAGES_BASE}/openblas/lib64/:${PACKAGES_BASE}/scalapack/lib/
+    export PATH=$PATH:${PACKAGES_BASE}/mpich/bin/:${PACKAGES_BASE}/BerkeleyGW/bin/
 
 %post
-    cd /opt/
+    PACKAGES_BASE=/my_packages
+    MPI_BASE=${PACKAGES_BASE}/mpich
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MPI_BASE}/lib
+    export PATH=${PATH}:${MPI_BASE}/bin
+
+    cd $PACKAGES_BASE
     wget https://berkeley.box.com/shared/static/ze3azi5vlyw7hpwvl9i5f82kaiid6g0x.gz -O BerkeleyGW-2.1.tar.gz
     tar -zxf BerkeleyGW-2.1.tar.gz && mv BerkeleyGW-2.1 BerkeleyGW && cd BerkeleyGW
     cp /configs/arch.mk arch.mk
     make all-flavors && make clean
-    rm -rf /opt/BerkeleyGW-2.1.tar.gz
+    cd $PACKAGES_BASE
+    rm -rf ./BerkeleyGW-2.1.tar.gz
 
 ##############################
 # test-mpi
@@ -31,8 +39,8 @@ From: ../../base/centos/centos.sif
     RUN_DIR=/tmp/regression_tests_${UUID}
     export TEMPDIRPATH=${RUN_DIR}/workspace
     mkdir -p $RUN_DIR
-    cp -r /opt/BerkeleyGW/testsuite $RUN_DIR
-    cp /opt/BerkeleyGW/arch.mk $RUN_DIR
+    cp -r ${PACKAGES_BASE}/BerkeleyGW/testsuite $RUN_DIR
+    cp ${PACKAGES_BASE}/BerkeleyGW/arch.mk $RUN_DIR
     cd ${RUN_DIR}/testsuite && make check-parallel
 
 %appinstall test-mpi
@@ -44,7 +52,7 @@ From: ../../base/centos/centos.sif
 %appenv test-mpi
     export OMP_NUM_THREADS=2
     export BGW_TEST_MPI_NPROCS=4
-    export BGW_CHECK_FLAGS="-b /opt/BerkeleyGW/bin/"
+    export BGW_CHECK_FLAGS="-b ${PACKAGES_BASE}/BerkeleyGW/bin/"
 
 %apphelp test-mpi
     Runs the regression suite of BerkleyGW within the container
