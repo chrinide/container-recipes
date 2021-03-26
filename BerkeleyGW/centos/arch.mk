@@ -24,24 +24,20 @@ REMOVE  = /bin/rm -f
 
 # Math Libraries
 #
-FFTWBASE     = /my_packages/fftw3/
-FFTWLIB      = ${FFTWBASE}/lib/libfftw3.a ${FFTWBASE}/lib/libfftw3_omp.a
-FFTWINCLUDE  = ${FFTWBASE}/include/
+FFTWLIB      = ${FFTW3_BASE}/lib/libfftw3.a ${FFTW3_BASE}/lib/libfftw3_omp.a
+FFTWINCLUDE  = ${FFTW3_BASE}/include/
 
-LAPACKBASE   = /my_packages/openblas/
-LAPACKLIB    = ${LAPACKBASE}/lib64/libopenblas.a
+LAPACKLIB    = ${LAPACK_BASE}/lib64/libopenblas.a
 
-SCALAPACKBASE = /my_packages/scalapack/
-SCALAPACKLIB  = ${SCALAPACKBASE}/lib/libscalapack.a
+SCALAPACKLIB  = ${SCALAPACK_BASE}/lib/libscalapack.a
 
 # HDF Library
-HDF5BASE     = /my_packages/hdf5/
-HDF5LIB      = ${HDF5BASE}/lib/libhdf5hl_fortran.a \
-	       ${HDF5BASE}/lib/libhdf5_hl.a \
-	       ${HDF5BASE}/lib/libhdf5_fortran.a \
-	       ${HDF5BASE}/lib/libhdf5.a \
+HDF5LIB      = ${HDF5_BASE}/lib/libhdf5hl_fortran.a \
+	       ${HDF5_BASE}/lib/libhdf5_hl.a \
+	       ${HDF5_BASE}/lib/libhdf5_fortran.a \
+	       ${HDF5_BASE}/lib/libhdf5.a \
 	       -ldl
-HDF5INCLUDE  = ${HDF5BASE}/include/
+HDF5INCLUDE  = ${HDF5_BASE}/include/
 
 #need to export MPIEXEC=/usr/bin/mpirun if this is not default in `which mpiexec`
 TESTSCRIPT = make check-parallel

@@ -10,6 +10,8 @@ From: centos:8.3.2011
     * NetLib ScaLAPACK
     * FFTW3
     * HDF5
+    All packages have an assocated "_BASE" environment variable to point
+    to their base directory.
 
 %labels
     MAINTAINER William Huhn (will@huhn.tech)
@@ -17,6 +19,12 @@ From: centos:8.3.2011
 
 %environment
     export PACKAGES_BASE=/my_packages
+    export MPI_BASE=${PACKAGES_BASE}/mpich
+    export BLAS_BASE=${PACKAGES_BASE}/openblas
+    export LAPACK_BASE=${BLAS_BASE}
+    export SCALAPACK_BASE=${PACKAGES_BASE}/scalapack
+    export FFTW3_BASE=${PACKAGES_BASE}/fftw3
+    export HDF5_BASE=${PACKAGES_BASE}/hdf5
 
 %post
     # Install needed packages
@@ -53,35 +61,37 @@ From: centos:8.3.2011
 
     # Download and install OpenBLAS from source
     OPENBLAS_VERSION=0.3.13
-    OPENBLAS_BASE=${PACKAGES_BASE}/openblas
+    BLAS_BASE=${PACKAGES_BASE}/openblas
     cd $PACKAGES_BASE
     wget http://github.com/xianyi/OpenBLAS/archive/v${OPENBLAS_VERSION}.tar.gz
     tar -zxf v${OPENBLAS_VERSION}.tar.gz && cd OpenBLAS-${OPENBLAS_VERSION}/
     rm -rf build && mkdir build && cd build
-    cmake -DCMAKE_INSTALL_PREFIX=${OPENBLAS_BASE} ..
+    cmake -DCMAKE_INSTALL_PREFIX=${BLAS_BASE} ..
     make -j && make install
     cd $PACKAGES_BASE
     rm -rf ./v${OPENBLAS_VERSION}.tar.gz ./OpenBLAS-${OPENBLAS_VERSION}/
 
-    OPENBLAS_LIB=${OPENBLAS_BASE}/lib64/libopenblas.a
+    OPENBLAS_LIB=${BLAS_BASE}/lib64/libopenblas.a
 
     # Download and install NetLib ScaLAPACK from source
     SCALAPACK_VERSION=2.1.0
+    SCALAPACK_BASE=${PACKAGES_BASE}/scalapack
     cd $PACKAGES_BASE
     wget http://www.netlib.org/scalapack/scalapack-${SCALAPACK_VERSION}.tgz
     tar -zxf scalapack-${SCALAPACK_VERSION}.tgz && cd scalapack-${SCALAPACK_VERSION}
     rm -rf build && mkdir build && cd build
-    cmake -DCMAKE_EXE_LINKER_FLAGS=-pthread -DBLAS_LIBRARIES=${OPENBLAS_LIB} -DLAPACK_LIBRARIES=${OPENBLAS_LIB} -DCMAKE_INSTALL_PREFIX=${PACKAGES_BASE}/scalapack ..
+    cmake -DCMAKE_EXE_LINKER_FLAGS=-pthread -DBLAS_LIBRARIES=${OPENBLAS_LIB} -DLAPACK_LIBRARIES=${OPENBLAS_LIB} -DCMAKE_INSTALL_PREFIX=${SCALAPACK_BASE} ..
     make -j VERBOSE=1 && make install
     cd $PACKAGES_BASE
     rm -rf ./scalapack-${SCALAPACK_VERSION}.tgz ./scalapack-${SCALAPACK_VERSION}
 
     # Download and install FFTW3 from source
     FFTW_VERSION=3.3.5
+    FFTW3_BASE=${PACKAGES_BASE}/fftw3
     cd $PACKAGES_BASE
     wget ftp://ftp.fftw.org/pub/fftw/fftw-${FFTW_VERSION}.tar.gz
     tar -zxf fftw-${FFTW_VERSION}.tar.gz && cd fftw-${FFTW_VERSION}
-    ./configure F77=gfortran F90=gfortran --prefix=${PACKAGES_BASE}/fftw3 --enable-openmp
+    ./configure F77=gfortran F90=gfortran --enable-openmp --prefix=${FFTW3_BASE}
     make -j && make install
     cd $PACKAGES_BASE
     rm -rf ./fftw-${FFTW_VERSION}.tar.gz ./fftw-${FFTW_VERSION}/
@@ -90,11 +100,12 @@ From: centos:8.3.2011
     HDF5_MAJOR_MINOR_VERSION=1.10
     HDF5_PATCH_VERSION=5
     HDF5_VERSION=${HDF5_MAJOR_MINOR_VERSION}.${HDF5_PATCH_VERSION}
+    HDF5_BASE=${PACKAGES_BASE}/hdf5
     cd $PACKAGES_BASE
     wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_MAJOR_MINOR_VERSION}/hdf5-${HDF5_VERSION}/src/hdf5-${HDF5_VERSION}.tar.gz
     tar -zxf hdf5-${HDF5_VERSION}.tar.gz && cd hdf5-${HDF5_VERSION}
     rm -rf build && mkdir build && cd build
-    ../configure --enable-fortran --enable-parallel --enable-fortran2003 --prefix=${PACKAGES_BASE}/hdf5
+    ../configure --enable-fortran --enable-parallel --enable-fortran2003 --prefix=${HDF5_BASE}
     make -j && make install
     cd $PACKAGES_BASE
     rm -rf ./hdf5-${HDF5_VERSION}.tar.gz ./hdf5-${HDF5_VERSION}/

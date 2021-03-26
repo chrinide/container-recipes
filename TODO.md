@@ -1,6 +1,5 @@
 Main TODOs:
 
-* Convert Quantum ESPRESSO and FHI-aim containers to new file system
 * Fix metadata in headers
 * Convert Singularity to Docker + Singularity
 * Stop using local image bootstrapping for code containers

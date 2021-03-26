@@ -8,13 +8,28 @@ From: ../../base/centos/centos.sif
     MAINTAINER William Huhn (will@huhn.tech)
     VERSION ???
 
+%environment
+    export QE_BASE=${PACKAGES_BASE}/q-e/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH::${MPI_BASE}/lib/
+    export PATH=$PATH:${MPI_BASE}/bin/:${QE_BASE}/bin/
+
 %post
+    export QE_BASE=${PACKAGES_BASE}/q-e/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH::${MPI_BASE}/lib/
+    export PATH=$PATH:${MPI_BASE}/bin/:${FHI_AIMS_BASE}/bin/
     QE_VERSION=6.6
 
     cd /
     git clone https://gitlab.com/QEF/q-e.git
     cd q-e && git checkout qe-${QE_VERSION}
-    ./configure --enable-openmp --with-hdf5=/usr/local/
+    ./configure \
+        BLAS_LIBS="${BLAS_BASE}/lib64/libopenblas.a" \
+        LAPACK_LIBS="${LAPACK_BASE}/lib64/libopenblas.a" \
+        SCALAPACK_LIBS="${SCALAPACK_BASE}/lib/libscalapack.a" \
+        FFT_LIBS="${FFTW3_BASE}/lib/libfftw3.a ${FFTW3_BASE}/lib/libfftw3_omp.a" \
+        FFTW_INCLUDE="${FFTW3_BASE}/include" --enable-openmp --with-hdf5=${HDF5_BASE} --prefix=${QE_BASE}
+    sed -i '/^DFLAGS / s/$/ -D__FFTW/' make.inc
+    sed -i '/QELIBS / s/$(BEEF_LIBS)/$(BEEF_LIBS) $(BLAS_LIBS)/' make.inc
     make all epw && make install
 
     # Prepare test suite files for reuse
@@ -39,7 +54,7 @@ From: ../../base/centos/centos.sif
     export TMP_DIR=${RUN_DIR}/workspace
     cp -r /qe-tests/ ${RUN_DIR} && cd ${RUN_DIR}
     # Do not believe the documentation, the "BIN_DIR" environment variable does nothing.
-    ln -s /usr/local/bin/ ./bin
+    ln -s ${QE_BASE}/bin/ ./bin
     cd test-suite && make run-tests-parallel
 
 %appinstall test-mpi

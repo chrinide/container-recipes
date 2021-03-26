@@ -10,19 +10,28 @@ From: ../../base/centos/centos.sif
     VERSION ???
 
 %runscript
-    aims.x
+    ${FHI_AIMS_BASE}/bin/aims.x
 
 %files
     ./git_repo/ /FHIaims
     ./initial_cache.cmake /configs/initial_cache.cmake
 
+%environment
+    export FHI_AIMS_BASE=${PACKAGES_BASE}/FHI-aims/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH::${MPI_BASE}/lib/
+    export PATH=$PATH:${MPI_BASE}/bin/:${FHI_AIMS_BASE}/bin/
+
 %post
+    export FHI_AIMS_BASE=${PACKAGES_BASE}/FHI-aims/
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MPI_BASE}/lib
+    export PATH=${PATH}:${MPI_BASE}/bin
+
     GIT_VERSION=1bf89dc3f1c5afa221f5af3af57574af8ae0b25c
     cd /FHIaims && git checkout ${GIT_VERSION}
     rm -rf build && mkdir build && cd build
     cp /configs/initial_cache.cmake initial_cache.cmake
-    cmake -C initial_cache.cmake ..
-    make -j && make install
+    cmake -C initial_cache.cmake -DCMAKE_INSTALL_PREFIX=${FHI_AIMS_BASE} ..
+    make -j VERBOSE=1 && make install
     cp -r ../regression_tests /regression_tests
     rm -rf /FHIaims
 
@@ -34,7 +43,7 @@ From: ../../base/centos/centos.sif
     UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
     RUN_DIR=/tmp/regression_tests_${UUID}
     cp -r /regression_tests $RUN_DIR && cd $RUN_DIR
-    ./regressiontools.py full --mpiexe mpiexec --cpus ${N_CPUS_TEST} --batch --exclude "RT-TDDFT" ./references_lastrelease/ aims.x
+    ./regressiontools.py full --mpiexe mpiexec --cpus ${N_CPUS_TEST} --batch --exclude "RT-TDDFT" ./references_lastrelease/ ${FHI_AIMS_BASE}/bin/aims.x
 
 %appinstall test-mpi
     yum install -y python3
