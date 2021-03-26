@@ -58,12 +58,12 @@ From: centos:8.3.2011
     wget http://github.com/xianyi/OpenBLAS/archive/v${OPENBLAS_VERSION}.tar.gz
     tar -zxf v${OPENBLAS_VERSION}.tar.gz && cd OpenBLAS-${OPENBLAS_VERSION}/
     rm -rf build && mkdir build && cd build
-    cmake -DBUILD_SHARED_LIBS=true -DCMAKE_INSTALL_PREFIX=${OPENBLAS_BASE} ..
+    cmake -DCMAKE_INSTALL_PREFIX=${OPENBLAS_BASE} ..
     make -j && make install
     cd $PACKAGES_BASE
     rm -rf ./v${OPENBLAS_VERSION}.tar.gz ./OpenBLAS-${OPENBLAS_VERSION}/
 
-    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${OPENBLAS_BASE}/lib64
+    OPENBLAS_LIB=${OPENBLAS_BASE}/lib64/libopenblas.a
 
     # Download and install NetLib ScaLAPACK from source
     SCALAPACK_VERSION=2.1.0
@@ -71,8 +71,8 @@ From: centos:8.3.2011
     wget http://www.netlib.org/scalapack/scalapack-${SCALAPACK_VERSION}.tgz
     tar -zxf scalapack-${SCALAPACK_VERSION}.tgz && cd scalapack-${SCALAPACK_VERSION}
     rm -rf build && mkdir build && cd build
-    cmake -DBUILD_SHARED_LIBS=true -DCMAKE_INSTALL_PREFIX=${PACKAGES_BASE}/scalapack ..
-    make -j && make install
+    cmake -DCMAKE_EXE_LINKER_FLAGS=-pthread -DBLAS_LIBRARIES=${OPENBLAS_LIB} -DLAPACK_LIBRARIES=${OPENBLAS_LIB} -DCMAKE_INSTALL_PREFIX=${PACKAGES_BASE}/scalapack ..
+    make -j VERBOSE=1 && make install
     cd $PACKAGES_BASE
     rm -rf ./scalapack-${SCALAPACK_VERSION}.tgz ./scalapack-${SCALAPACK_VERSION}
 
@@ -81,7 +81,7 @@ From: centos:8.3.2011
     cd $PACKAGES_BASE
     wget ftp://ftp.fftw.org/pub/fftw/fftw-${FFTW_VERSION}.tar.gz
     tar -zxf fftw-${FFTW_VERSION}.tar.gz && cd fftw-${FFTW_VERSION}
-    ./configure F77=gfortran F90=gfortran --prefix=${PACKAGES_BASE}/fftw3 --enable-openmp --enable-shared 
+    ./configure F77=gfortran F90=gfortran --prefix=${PACKAGES_BASE}/fftw3 --enable-openmp
     make -j && make install
     cd $PACKAGES_BASE
     rm -rf ./fftw-${FFTW_VERSION}.tar.gz ./fftw-${FFTW_VERSION}/
@@ -94,7 +94,7 @@ From: centos:8.3.2011
     wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-${HDF5_MAJOR_MINOR_VERSION}/hdf5-${HDF5_VERSION}/src/hdf5-${HDF5_VERSION}.tar.gz
     tar -zxf hdf5-${HDF5_VERSION}.tar.gz && cd hdf5-${HDF5_VERSION}
     rm -rf build && mkdir build && cd build
-    ../configure --enable-fortran --enable-parallel --enable-shared --enable-fortran2003 --prefix=${PACKAGES_BASE}/hdf5
+    ../configure --enable-fortran --enable-parallel --enable-fortran2003 --prefix=${PACKAGES_BASE}/hdf5
     make -j && make install
     cd $PACKAGES_BASE
     rm -rf ./hdf5-${HDF5_VERSION}.tar.gz ./hdf5-${HDF5_VERSION}/

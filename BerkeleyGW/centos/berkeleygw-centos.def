@@ -12,8 +12,7 @@ From: ../../base/centos/centos.sif
     ./arch.mk /configs/arch.mk
 
 %environment
-
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PACKAGES_BASE}/fftw3/lib/:${PACKAGES_BASE}/hdf5/lib/:${PACKAGES_BASE}/mpich/lib/:${PACKAGES_BASE}/openblas/lib64/:${PACKAGES_BASE}/scalapack/lib/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH::${PACKAGES_BASE}/mpich/lib/
     export PATH=$PATH:${PACKAGES_BASE}/mpich/bin/:${PACKAGES_BASE}/BerkeleyGW/bin/
 
 %post

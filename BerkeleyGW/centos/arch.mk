@@ -24,16 +24,24 @@ REMOVE  = /bin/rm -f
 
 # Math Libraries
 #
-FFTWLIB      = -L/my_packages/fftw3/lib -lfftw3 -lfftw3_omp
-FFTWINCLUDE  = /my_packages/fftw3/include
-LAPACKLIB    = -L/my_packages/openblas/lib64 -lopenblas
-BLACSDIR     = 
-BLACS        =
-SCALAPACKLIB = -L/my_packages/scalapack/lib -lscalapack
+FFTWBASE     = /my_packages/fftw3/
+FFTWLIB      = ${FFTWBASE}/lib/libfftw3.a ${FFTWBASE}/lib/libfftw3_omp.a
+FFTWINCLUDE  = ${FFTWBASE}/include/
+
+LAPACKBASE   = /my_packages/openblas/
+LAPACKLIB    = ${LAPACKBASE}/lib64/libopenblas.a
+
+SCALAPACKBASE = /my_packages/scalapack/
+SCALAPACKLIB  = ${SCALAPACKBASE}/lib/libscalapack.a
 
 # HDF Library
-HDF5LIB      = -L/my_packages/hdf5/lib -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 -ldl
-HDF5INCLUDE  = /my_packages/hdf5/include
+HDF5BASE     = /my_packages/hdf5/
+HDF5LIB      = ${HDF5BASE}/lib/libhdf5hl_fortran.a \
+	       ${HDF5BASE}/lib/libhdf5_hl.a \
+	       ${HDF5BASE}/lib/libhdf5_fortran.a \
+	       ${HDF5BASE}/lib/libhdf5.a \
+	       -ldl
+HDF5INCLUDE  = ${HDF5BASE}/include/
 
 #need to export MPIEXEC=/usr/bin/mpirun if this is not default in `which mpiexec`
 TESTSCRIPT = make check-parallel
